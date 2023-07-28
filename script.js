@@ -17,11 +17,12 @@ function preload() {
   baseImg = loadImage('sprites/base.png');  // Load the base image
 
   // Load sounds
-  dieSound = loadSound('soundseffect/die.mp3');
-  pointSound = loadSound('soundseffect/point.mp3');
+  startSound = loadSound('audio/swoosh.wav');
+  passSound = loadSound('audio/point.wav');
+  gameOverSound = loadSound('audio/die.wav');
 
   // Load background image
-  backgroundImage = loadImage('images/background-img.png');
+  backgroundImage = loadImage('images/background.jpg');
 }
 
 function setup() {
@@ -188,4 +189,4 @@ function Obstacle() {
             return false;
         }
     }
-}
+}        
