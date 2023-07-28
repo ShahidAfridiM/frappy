@@ -11,7 +11,7 @@ let backgroundImage;
 let buttonX, buttonY, buttonWidth, buttonHeight;
 
 function preload() {
-  birdImg = loadImage('sprites/bluebird-downflap.png');
+  birdImg = loadImage('sprites/bluebird-midflap.png');
   obstacleTopImg = loadImage('sprites/pipe-green.png');
   obstacleBottomImg = loadImage('sprites/pipe-red.png');
   baseImg = loadImage('sprites/base.png');  // Load the base image
