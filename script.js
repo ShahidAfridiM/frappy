@@ -67,13 +67,13 @@ function draw() {
         fill(255);
         textSize(25);
         textAlign(CENTER, CENTER);
-        text("FLY AGAIN", width / 2, height / 4);
+        text("WE ARE VERY LOW OVER THE FOREST NOW.", width / 2, height / 4);
         // Draw the restart button
         fill(200);
         rect(buttonX, buttonY, buttonWidth, buttonHeight);
         fill(0);
         textSize(19);
-        text("REBOOT", width / 2, height / 2)
+        text("Fly Fast!!", width / 2, height / 2)
  
     }
     fill(255);
@@ -82,8 +82,8 @@ function draw() {
     text("Score: " + score, width / 2, 50);  // Position at center of screen
 
     textSize(15); // Make the following texts smaller
-    text("ShahidAfridi", width / 2, 75); // Place the text below the score
-    text("#pepperprogramming", width / 2, 100); // Place the text below "ShahidAfridi"
+    text("Divya", width / 2, 75); // Place the text below the score
+    text("#pepperprogramming", width / 2, 100); // Place the text below "Divya"
 
     image(baseImg, 0, height - baseImg.height * 0.75, width, baseImg.height * 0.75);
   // Draw the base image at the bottom of the screen
@@ -189,4 +189,4 @@ function Obstacle() {
             return false;
         }
     }
-}        
+}
