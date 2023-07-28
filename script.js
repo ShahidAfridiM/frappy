@@ -20,7 +20,7 @@ message.classList.add('messageStyle');
 
 document.addEventListener('keydown', (e) => {
     
-    if(e.key == 'Enter' && game_state != 'Play'){
+    if(e.key == 'Spacebar' && game_state != 'Play'){
         document.querySelectorAll('.pipe_sprite').forEach((e) => {
             e.remove();
         });
@@ -72,14 +72,14 @@ function play(){
         if(game_state != 'Play') return;
         bird_dy = bird_dy + grativy;
         document.addEventListener('keydown', (e) => {
-            if(e.key == 'ArrowUp' || e.key == ' '){
+            if(e.key == 'Spacebar' || e.key == ' '){
                 img.src = 'images/Bird-2.png';
                 bird_dy = -7.6;
             }
         });
 
         document.addEventListener('keyup', (e) => {
-            if(e.key == 'ArrowUp' || e.key == ' '){
+            if(e.key == 'Spacebar' || e.key == ' '){
                 img.src = 'images/Bird.png';
             }
         });
@@ -126,4 +126,52 @@ function play(){
         requestAnimationFrame(create_pipe);
     }
     requestAnimationFrame(create_pipe);
+}
+function setup() {
+    let cnv = createCanvas(windowWidth, windowHeight);
+    cnv.id('gameCanvas');  // Assign an id to the canvas
+    bird = new Bird();
+    obstacles.push(new Obstacle());
+    buttonWidth = width / 2;
+    buttonHeight = height / 10;
+    buttonX = width / 2 - buttonWidth / 2;
+    buttonY = height / 2 - buttonHeight / 2;
+}
+
+function keyPressed() {
+    if (key == ' ' || touches.length > 0) {
+        bird.up();
+        touches = [];
+    }
+}
+
+function mousePressed() {
+    bird.up();
+    // Check if the mouse click is within the bounds of the button
+    if (gameOver && mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight) {
+        // Restart the game
+        bird = new Bird();
+        obstacles = [];
+        score = 0;
+        gameOver = false;
+
+        // Play start sound
+        startSound.play();
+    }
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
+
+function Bird() {
+    this.y = height / 2;
+    this.x = 64;
+    this.size = height / 15;  // Adjust bird size based on screen height
+    //... rest of the code
+}
+
+function Obstacle() {
+    this.w = width / 8;  // Adjust obstacle width based on screen width
+    //... rest of the code
 }
