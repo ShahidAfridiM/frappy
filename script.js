@@ -67,13 +67,13 @@ function draw() {
         fill(255);
         textSize(25);
         textAlign(CENTER, CENTER);
-        text("WE ARE VERY LOW OVER THE FOREST NOW.", width / 2, height / 4);
+        text("Better Luck Next Time.", width / 2, height / 4);
         // Draw the restart button
         fill(200);
         rect(buttonX, buttonY, buttonWidth, buttonHeight);
         fill(0);
         textSize(19);
-        text("Fly Fast!!", width / 2, height / 2)
+        text("Fly Again", width / 2, height / 2)
  
     }
     fill(255);
