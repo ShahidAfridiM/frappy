@@ -18,135 +18,91 @@ let game_state = 'Start';
 img.style.display = 'none';
 message.classList.add('messageStyle');
 
-document.addEventListener('keydown', (e) => {
-    
-    if(e.key == 'Spacebar' && game_state != 'Play'){
-        document.querySelectorAll('.pipe_sprite').forEach((e) => {
-            e.remove();
-        });
-        img.style.display = 'block';
-        bird.style.top = '40vh';
-        game_state = 'Play';
-        message.innerHTML = '';
-        score_title.innerHTML = 'Score : ';
-        score_val.innerHTML = '0';
-        message.classList.remove('messageStyle');
-        play();
-    }
-});
-
-function play(){
-    function move(){
-        if(game_state != 'Play') return;
-
-        let pipe_sprite = document.querySelectorAll('.pipe_sprite');
-        pipe_sprite.forEach((element) => {
-            let pipe_sprite_props = element.getBoundingClientRect();
-            bird_props = bird.getBoundingClientRect();
-
-            if(pipe_sprite_props.right <= 0){
-                element.remove();
-            }else{
-                if(bird_props.left < pipe_sprite_props.left + pipe_sprite_props.width && bird_props.left + bird_props.width > pipe_sprite_props.left && bird_props.top < pipe_sprite_props.top + pipe_sprite_props.height && bird_props.top + bird_props.height > pipe_sprite_props.top){
-                    game_state = 'End';
-                    message.innerHTML = 'Game Over'.fontcolor('red') + '<br>Press Enter To Restart';
-                    message.classList.add('messageStyle');
-                    img.style.display = 'none';
-                    sound_die.play();
-                    return;
-                }else{
-                    if(pipe_sprite_props.right < bird_props.left && pipe_sprite_props.right + move_speed >= bird_props.left && element.increase_score == '1'){
-                        score_val.innerHTML =+ score_val.innerHTML + 1;
-                        sound_point.play();
-                    }
-                    element.style.left = pipe_sprite_props.left - move_speed + 'px';
-                }
-            }
-        });
-        requestAnimationFrame(move);
-    }
-    requestAnimationFrame(move);
-
-    let bird_dy = 0;
-    function apply_gravity(){
-        if(game_state != 'Play') return;
-        bird_dy = bird_dy + grativy;
-        document.addEventListener('keydown', (e) => {
-            if(e.key == 'Spacebar' || e.key == ' '){
-                img.src = 'images/Bird-2.png';
-                bird_dy = -7.6;
-            }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if(e.key == 'Spacebar' || e.key == ' '){
-                img.src = 'images/Bird.png';
-            }
-        });
-
-        if(bird_props.top <= 0 || bird_props.bottom >= background.bottom){
-            game_state = 'End';
-            message.style.left = '28vw';
-            window.location.reload();
-            message.classList.remove('messageStyle');
-            return;
-        }
-        bird.style.top = bird_props.top + bird_dy + 'px';
-        bird_props = bird.getBoundingClientRect();
-        requestAnimationFrame(apply_gravity);
-    }
-    requestAnimationFrame(apply_gravity);
-
-    let pipe_seperation = 0;
-
-    let pipe_gap = 35;
-
-    function create_pipe(){
-        if(game_state != 'Play') return;
-
-        if(pipe_seperation > 115){
-            pipe_seperation = 0;
-
-            let pipe_posi = Math.floor(Math.random() * 43) + 8;
-            let pipe_sprite_inv = document.createElement('div');
-            pipe_sprite_inv.className = 'pipe_sprite';
-            pipe_sprite_inv.style.top = pipe_posi - 70 + 'vh';
-            pipe_sprite_inv.style.left = '100vw';
-
-            document.body.appendChild(pipe_sprite_inv);
-            let pipe_sprite = document.createElement('div');
-            pipe_sprite.className = 'pipe_sprite';
-            pipe_sprite.style.top = pipe_posi + pipe_gap + 'vh';
-            pipe_sprite.style.left = '100vw';
-            pipe_sprite.increase_score = '1';
-
-            document.body.appendChild(pipe_sprite);
-        }
-        pipe_seperation++;
-        requestAnimationFrame(create_pipe);
-    }
-    requestAnimationFrame(create_pipe);
-}
 function setup() {
     let cnv = createCanvas(windowWidth, windowHeight);
     cnv.id('gameCanvas');  // Assign an id to the canvas
     bird = new Bird();
     obstacles.push(new Obstacle());
-    buttonWidth = width / 2;
-    buttonHeight = height / 10;
+    buttonWidth = 200;
+    buttonHeight = 50;
     buttonX = width / 2 - buttonWidth / 2;
     buttonY = height / 2 - buttonHeight / 2;
+    cnv.touchStarted(handleTouch);
+}
+
+function draw() {
+    // Draw the background image
+    image(backgroundImage, 0, 0, width, height);
+
+    bird.update();
+    bird.show();
+
+    if (!gameOver) {
+        if (frameCount % 100 == 0) {
+            obstacles.push(new Obstacle());
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            obstacles[i].show();
+            obstacles[i].update();
+
+            if (obstacles[i].hits(bird)) {
+                console.log("HIT");
+                gameOver = true;
+                gameOverSound.play();  // Play game over sound
+            }
+
+            if (obstacles[i].offscreen()) {
+                obstacles.splice(i, 1);
+            }
+        }
+    } else {
+        fill(255);
+        textSize(25);
+        textAlign(CENTER, CENTER);
+        text("WE ARE VERY LOW OVER THE FOREST NOW.", width / 2, height / 4);
+        // Draw the restart button
+        fill(200);
+        rect(buttonX, buttonY, buttonWidth, buttonHeight);
+        fill(0);
+        textSize(19);
+        text("Fly Fast!!", width / 2, height / 2)
+ 
+    }
+    fill(255);
+    textSize(32);
+    textAlign(CENTER, CENTER);  // Center align text
+    text("Score: " + score, width / 2, 50);  // Position at center of screen
+
+    textSize(15); // Make the following texts smaller
+    text("Divya", width / 2, 75); // Place the text below the score
+    text("#pepperprogramming", width / 2, 100); // Place the text below "Divya"
+
+    image(baseImg, 0, height - baseImg.height * 0.75, width, baseImg.height * 0.75);
+  // Draw the base image at the bottom of the screen
+
 }
 
 function keyPressed() {
-    if (key == ' ' || touches.length > 0) {
+    if (key == ' ') {
         bird.up();
-        touches = [];
     }
 }
 
+function handleTouch() {
+    // Handle touch event on mobile
+    if (!gameOver) {
+        bird.up();
+    } else {
+        // Check if the touch is within the bounds of the restart button
+        if (mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight) {
+            restartGame();
+        }
+    }
+}
+
+
 function mousePressed() {
-    bird.up();
     // Check if the mouse click is within the bounds of the button
     if (gameOver && mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight) {
         // Restart the game
@@ -160,18 +116,70 @@ function mousePressed() {
     }
 }
 
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-}
-
 function Bird() {
     this.y = height / 2;
     this.x = 64;
-    this.size = height / 15;  // Adjust bird size based on screen height
-    //... rest of the code
+    this.gravity = 0.6;
+    this.lift = -15;
+    this.velocity = 0;
+
+    this.show = function() {
+        image(birdImg, this.x, this.y, 32, 32);
+    }
+
+    this.up = function() {
+        this.velocity = this.lift; 
+    }
+
+    this.update = function() {
+        this.velocity += this.gravity;
+        this.velocity *= 0.9;
+        this.y += this.velocity;
+
+        if (this.y > height - baseImg.height - birdImg.height / 2) {
+            this.y = height - baseImg.height - birdImg.height / 2;
+            this.velocity = 0;
+        }
+
+        if (this.y < 0) {
+            this.y = 0;
+            this.velocity = 0;
+        }
+    }
 }
 
 function Obstacle() {
-    this.w = width / 8;  // Adjust obstacle width based on screen width
-    //... rest of the code
+    this.top = random(height / 2);
+    this.bottom = random(height / 2);
+    this.x = width;
+    this.w = 50;
+    this.speed = 2;
+
+    this.hits = function(bird) {
+        if (bird.y - birdImg.height / 2 < this.top || bird.y + birdImg.height / 2 > height - this.bottom) {
+            if (bird.x > this.x && bird.x < this.x + this.w) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    this.show = function() {
+        image(obstacleTopImg, this.x, 0, this.w, this.top);
+        image(obstacleBottomImg, this.x, height - this.bottom, this.w, this.bottom);
+    }
+
+    this.update = function() {
+        this.x -= this.speed;
+    }
+
+    this.offscreen = function() {
+        if (this.x < -this.w) {
+            score++;
+            passSound.play();  // Play pass sound
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
